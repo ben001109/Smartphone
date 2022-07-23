@@ -58,20 +58,20 @@ public class PhoneState implements INBTSerializable<CompoundNBT> {
 	public void storeTextMessage(UUID uniqueID, UUID messageId, String senderName, String text) {
 		pendingMessages.add(new TextMessage(uniqueID, messageId, senderName, text));
 	}
-	
+
 	public void sendLoadStateMessage(ServerPlayerEntity destination) {
 		Network.INSTANCE.send(PacketDistributor.PLAYER.with(() -> destination),
 				new LoadPhoneStateMessage(state, TextMessage.serializeTextMessages(pendingMessages)));
 		pendingMessages = new ArrayList<>();
 	}
-	
+
 	public void removePendingTextMessage(UUID messageId) {
 		for (int i = pendingMessages.size() - 1; i >= 0; i--) {
 			if (pendingMessages.get(i).messageId.equals(messageId))
 				pendingMessages.remove(i);
 		}
 	}
-	
+
 	public void setState(CompoundNBT s) {
 		this.state = s;
 	}
@@ -138,7 +138,7 @@ public class PhoneState implements INBTSerializable<CompoundNBT> {
 			this.senderName = senderName;
 			this.text = text;
 		}
-		
+
 		public void handle(Phone phone) {
 			phone.recieveTextMessage(sender, senderName, text);
 		}
@@ -160,14 +160,14 @@ public class PhoneState implements INBTSerializable<CompoundNBT> {
 			senderName = nbt.getString("senderName");
 			text = nbt.getString("text");
 		}
-		
+
 		public static ListNBT serializeTextMessages(List<TextMessage> messages) {
 			ListNBT msgs = new ListNBT();
 			for (TextMessage m : messages)
 				msgs.add(m.serializeNBT());
 			return msgs;
 		}
-		
+
 		public static List<TextMessage> deserializeTextMessages(ListNBT nbt) {
 			List<TextMessage> messages = new ArrayList<>();
 			for (int i = 0; i < nbt.size(); i++) {
